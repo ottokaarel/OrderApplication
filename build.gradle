@@ -1,0 +1,162 @@
+buildscript {
+    dependencies {
+        classpath group: 'org.hsqldb',
+                name: 'hsqldb',
+                version: '2.6.1'
+    } }
+
+
+
+plugins {
+    id 'java'
+    id 'war'
+//    öelda, millises serveris käivitada
+    id 'org.gretty' version '3.0.6'
+    id "org.flywaydb.flyway" version "8.0.2"
+}
+
+
+
+
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+// Veebiserveri konfigureerimine, url path algus
+gretty {
+    contextPath = '/'
+}
+
+def jsonWebTokenVersion = '0.11.2'
+def flywayVersion = '8.0.2'
+def springSecurityVersion = '5.5.1'
+
+dependencies {
+
+    implementation group: 'com.opencsv',
+            name: 'opencsv',
+            version: '5.5.2'
+
+    implementation group: 'org.postgresql',
+            name: 'postgresql',
+            version: '42.2.23'
+
+    implementation group: 'org.springframework', name: 'spring-webmvc',
+            version: '5.3.10'
+
+    implementation group: 'org.springframework', name: 'spring-jdbc',
+            version: '5.3.10'
+
+    implementation group: 'org.springframework', name: 'spring-context',
+            version: '5.3.10'
+
+    implementation group: 'org.springframework', name: 'spring-aop',
+            version: '5.3.10'
+
+    implementation group: 'javax.annotation',
+            name: 'javax.annotation-api',
+            version: '1.3.2'
+
+    implementation group: 'jakarta.validation',
+            name: 'jakarta.validation-api',
+            version: '2.0.2'
+
+    implementation group: 'org.hibernate',
+            name: 'hibernate-validator',
+            version: '6.2.0.Final'
+
+    implementation group: 'org.hsqldb',
+            name: 'hsqldb',
+            version: '2.6.0'
+
+    implementation group: 'com.fasterxml.jackson.datatype',
+            name: 'jackson-datatype-jsr310',
+            version: '2.12.5'
+
+    implementation group: 'com.fasterxml.jackson.core',
+            name: 'jackson-databind',
+            version: '2.13.0'
+
+    implementation group: 'org.apache.logging.log4j',
+            name: 'log4j-api',
+            version: '2.14.1'
+
+    implementation group: 'org.apache.logging.log4j',
+            name: 'log4j-core',
+            version: '2.14.1'
+    implementation group: 'org.hibernate',
+            name: 'hibernate-core',
+            version: '5.5.8.Final'
+    implementation group: 'org.springframework',
+            name: 'spring-orm',
+            version: '5.3.11'
+
+    implementation group: 'org.springframework.security', name: 'spring-security-web',
+            version: springSecurityVersion
+
+    implementation group: 'org.springframework.security', name: 'spring-security-config',
+            version: springSecurityVersion
+
+    implementation group: 'io.jsonwebtoken',
+            name: 'jjwt-api',
+            version: jsonWebTokenVersion
+
+    implementation group: 'io.jsonwebtoken',
+            name: 'jjwt-impl',
+            version: jsonWebTokenVersion
+
+    implementation group: 'io.jsonwebtoken',
+            name: 'jjwt-jackson',
+            version: jsonWebTokenVersion
+
+
+    testImplementation group: 'org.springframework',
+            name: 'spring-test',
+            version: '5.3.10'
+    testImplementation group: 'org.hamcrest',
+            name: 'hamcrest-all',
+            version: '1.3'
+    testImplementation group: 'org.springframework.security',
+            name: 'spring-security-test',
+            version: springSecurityVersion
+
+
+
+    testImplementation group: 'junit',
+            name: 'junit',
+            version: '4.13.2'
+
+    testImplementation 'org.junit.platform:junit-platform-commons:1.8.2'
+
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+
+    compileOnly group: 'org.flywaydb',
+            name: 'flyway-core',
+            version: flywayVersion
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+    test {
+        useJUnitPlatform()
+    }
+
+}
+
+flyway {
+    def props = new Properties()
+
+    file("src/main/resources/application.properties")
+            .withInputStream { props.load(it) }
+
+    url = props.getProperty("hsql.url")
+    user = props.getProperty("db.user")
+    password = props.getProperty("db.pass")
+
+    locations = ['classpath:flyway']
+}
+
+
